@@ -9,11 +9,9 @@
     <%= category.description %>
   </p>
 
-
-  <p class="my-5">
+    <p class="my-5">
     <strong class="block font-medium mb-1">Image:</strong>
-    <%= category.image.present? ? image_tag(category.image, size: "200x200", class:"rounded-lg") :image_tag("https://via.placeholder.com/200") %>
+    <%= category.image.present? ? image_tag(category.image, size: "200x200", class:"rounded-lg") : image_tag("https://via.placeholder.com/50") %>
   </p>
-
 
 </div>

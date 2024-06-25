@@ -14,7 +14,7 @@
     <% @admin_stocks.each do |admin_stock| %>
       <%= render admin_stock %>
       <p>
-        <%= link_to "Show this stock", [:admin, admin_stock.product, admin_stock] class:"ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+        <%= link_to "Show this stock", [:admin, admin_stock.product, admin_stock], class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
       </p>
     <% end %>
   </div>

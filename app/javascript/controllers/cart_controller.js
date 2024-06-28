@@ -14,9 +14,9 @@ export default class extends Controller {
       total += item.price * item.quantity
       const div = document.createElement("div")
       div.classList.add("mt-2")
-      div.innerText = `Item: ${item.name} - ${item.price} - ${item.size} - Quantity: ${item.quantity}`
+      div.innerText = `Item: ${item.name} - ${item.price} - ${item.size} - Quantidade: ${item.quantity}`
       const deleteButton = document.createElement("button")
-      deleteButton.innerText = "Remove"
+      deleteButton.innerText = "Remover"
       deleteButton.value = item.id
       deleteButton.classList.add("bg-gray-500", "rounded", "text-white", "px-2", "py-1", "ml-2")
       deleteButton.addEventListener("click", this.removeFromCart)
@@ -25,22 +25,73 @@ export default class extends Controller {
     }
 
     const totalEl = document.createElement("div")
-    totalEl.innerText = `Total: ${total}`
+    totalEl.innerText = `Total R$: ${total}`
     let totalContainer = document.getElementById("total")
-    totalContainer.appendChild(totalEl)
+    if (totalContainer) {
+      totalContainer.appendChild(totalEl)
+    }
   }
 
-  clear(){
+  clear() {
     localStorage.removeItem("cart")
     window.location.reload()
   }
 
-  removeFromCart(event){
+  removeFromCart(event) {
     const cart = JSON.parse(localStorage.getItem("cart"))
     const id = event.target.value
     const index = cart.findIndex(item => item.id === id)
     cart.splice(index, 1)
     localStorage.setItem("cart", JSON.stringify(cart))
     window.location.reload()
+  }
+
+  checkout() {
+    const cart = JSON.parse(localStorage.getItem("cart"))
+    const payload = {
+      authenticity_token: document.querySelector("[name='csrf-token']").content, // Certifique-se de que o CSRF token está sendo corretamente obtido
+      cart: cart
+    }
+    
+    console.log("Payload enviado:", payload); // Adicione esta linha para verificar o payload no console
+
+    const csrfToken = document.querySelector("[name='csrf-token']").content
+    fetch("/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken
+      },
+      body: JSON.stringify(payload)
+    }).then(response => {
+      if(response.ok){
+        response.json().then(body => {
+          window.location.href = body.url
+        })
+      } else {
+        response.json().then(body => {
+          const errorEl = document.createElement("div")
+          errorEl.innerText = `Erro ao processar seu pedido: ${body.error}`
+          let errorContainer = document.getElementById("errorContainer")
+          if (errorContainer) {
+            errorContainer.appendChild(errorEl)
+          }
+        }).catch(error => {
+          const errorEl = document.createElement("div")
+          errorEl.innerText = "Erro ao processar seu pedido. Por favor, tente novamente."
+          let errorContainer = document.getElementById("errorContainer")
+          if (errorContainer) {
+            errorContainer.appendChild(errorEl)
+          }
+        })
+      }
+    }).catch(error => {
+      const errorEl = document.createElement("div")
+      errorEl.innerText = "Erro ao processar seu pedido. Por favor, tente novamente."
+      let errorContainer = document.getElementById("errorContainer")
+      if (errorContainer) {
+        errorContainer.appendChild(errorEl)
+      }
+    })
   }
 }

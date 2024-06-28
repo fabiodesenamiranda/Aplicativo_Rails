@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   namespace :admin do
+    
     resources :orders
     resources :products do
       resources :stocks
@@ -14,11 +15,16 @@ Rails.application.routes.draw do
     root to: "admin#index", as: :admin_root
   end 
 
-  resources :categories, only: [:show]
-  resources :products, only: [:show]
-  
   get "admin" => "admin#index"
   get "cart" => "carts#show"
+  post "checkout" => "checkouts#create"
+  get "success" => "checkouts#success"
+  get "cancel" => "checkouts#cancel"
+  post "webhooks" => "webhooks#stripe"
   
+  resources :categories, only: [:show]
+  resources :products, only: [:show]
+
 end
   
+

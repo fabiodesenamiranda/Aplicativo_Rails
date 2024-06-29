@@ -46,7 +46,8 @@ class CheckoutsController < ApplicationController
   def success
     render :success
   end
-
+  
+  
   def cancel
     render :cancel
   end
